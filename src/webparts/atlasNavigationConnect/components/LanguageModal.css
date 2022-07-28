@@ -1,0 +1,18 @@
+/* .modal-content{
+    background: none !important;
+    border-radius: 40px !important;
+    box-shadow: #fff 0px 0px 10px 0px!important;
+} */
+div[class*="languageModal"] .modal-content {
+    background: none !important;
+    border-radius: 40px !important;
+    box-shadow: #fff 0px 0px 10px 0px !important;
+}
+/* .select-lang{
+    background-color: #fff !important;
+    border-color: #000 !important;
+    color: #111 !important;
+} */
+div[class*="fade modal show"]{
+    background-color: none !important;
+}
