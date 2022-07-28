@@ -371,12 +371,12 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     let navText = [
       "English,Our Brands,Rackhouse,Tools",
       "Chinese,我们的品牌,机架,工具",
-      "German,Unsere Marken,Rackhouse,Tools",
+      "German,Unsere Marken,Lagerhaus,Werkzeug",
       "Russian,Наши бренды,стеллажи,инструменты",
       "Portuguese,Nossas Marcas,Rackhouse,Ferramentas",
       "Japanese,私たちのブランド,ラックハウス,ツール",
       "French,Nos marques,Rackhouse, Outils",
-      "Polish,Nasze marki,rackhouse, narzędzia",
+      "Polish,Nasze marki,Regał, Narzędzia",
       "Spanish,Nuestras Marcas,Rackhouse, Herramientas"
     ]
 
