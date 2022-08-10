@@ -38,8 +38,8 @@ export class LanguageModal extends React.Component<any, any> {
       ]
 
     }
-    console.log(this.props.userLanguage)
-    console.log(this.props.userBrandView)
+    // console.log(this.props.userLanguage)
+    // console.log(this.props.userBrandView)
     
 
   }
@@ -65,8 +65,8 @@ export class LanguageModal extends React.Component<any, any> {
 
 
   render() {
-    console.log(this.props.uniqueLanguages)
-    console.log(this.props.uniqueBrandViews)
+    // console.log(this.props.uniqueLanguages)
+    // console.log(this.props.uniqueBrandViews)
 
     return (
       <Modal

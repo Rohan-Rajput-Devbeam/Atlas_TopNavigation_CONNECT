@@ -6,6 +6,13 @@ import * as pnp from "sp-pnp-js";
 import { SPHttpClient, SPHttpClientResponse, SPHttpClientConfiguration } from '@microsoft/sp-http';
 // import * as strings from "FlipCardProgramWebPartStrings";
 
+
+import "isomorphic-fetch"; // or import the fetch polyfill you installed
+import { Client } from "@microsoft/microsoft-graph-client";
+import { MSGraphClient } from '@microsoft/sp-http';
+import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
+import { groupBy } from "@microsoft/sp-lodash-subset";
+
 export class SPService {
     private userIDinPreferenceList: any;
     constructor(private context: WebPartContext) {
@@ -16,20 +23,42 @@ export class SPService {
 
     public async getCurrentUser() {
         let tempvar = await sp.web.currentUser.get();
-        console.log(tempvar)
+        // console.log(tempvar)
         return await sp.web.currentUser.get();
     }
 
     public async getUserGroups() {
-        var finalArray: any[];
-        let myGroups = await (await this.context.spHttpClient.get(`${this.context.pageContext.web.absoluteUrl}/_api/Web/CurrentUser/Groups`,
-            SPHttpClient.configurations.v1)).json();
-        console.log(myGroups);
+        // var finalArray: any[];
+        // let myGroups = await (await this.context.spHttpClient.get(`${this.context.pageContext.web.absoluteUrl}/_api/Web/CurrentUser/Groups`,
+        //     SPHttpClient.configurations.v1)).json();
+        // console.log(myGroups);
 
-        return myGroups
+        let Mygroups = this.context.msGraphClientFactory.getClient().then(async (client: MSGraphClient): Promise<void> => {
+            let group = await client.api('/me/memberOf/$/microsoft.graph.group')
+                .filter('groupTypes/any(a:a eq \'unified\')')
+                .get();
+            // console.log(group)
+            return group
+
+        });
+
+        // console.log(Mygroups)
+        return Mygroups
+
+        
 
     }
 
+    public async getRootOwners() {
+          var finalArray: any[];
+        let myGroups = await (await this.context.spHttpClient.get(`${this.context.pageContext.web.absoluteUrl}/_api/Web/CurrentUser/Groups`,
+            SPHttpClient.configurations.v1)).json();
+        // console.log(myGroups);
+
+        return myGroups
+
+
+    }
 
 
     public async getUserLanguage(listName: string, userEmail: string) {
@@ -40,16 +69,10 @@ export class SPService {
                 .filter("Title eq '" + userEmail + "'")
                 //.top(Number(slideCount))
                 .expand().get();
-            console.log(listItems)
+            // console.log(listItems)
             let userLanguage = listItems.map(e => (e.Language))
             this.userIDinPreferenceList = listItems.map(e => (e.Id))
-            // this.userIDinPreferenceList = userID[0];
-            // // console.log("I am list Items");
-            // // console.log(listItems);
-            // // console.log(userLanguage);
-            // console.log(this.userIDinPreferenceList)
-            // console.log(userID)
-            console.log(userLanguage)
+           
 
             return userLanguage;
         } catch (err) {
@@ -67,7 +90,7 @@ export class SPService {
                 .filter("Title eq '" + userEmail + "'")
                 //.top(Number(slideCount))
                 .expand().get();
-            console.log(listItems)
+            // console.log(listItems)
 
             let userBrandView = listItems.map(e => (e.BrandViewType))
             this.userIDinPreferenceList = listItems.map(e => (e.Id))
@@ -75,9 +98,9 @@ export class SPService {
             // // console.log("I am list Items");
             // // console.log(listItems);
             // // console.log(userLanguage);
-            console.log(this.userIDinPreferenceList)
+            // console.log(this.userIDinPreferenceList)
             // console.log(userID)
-            console.log(userBrandView)
+            // console.log(userBrandView)
 
             return userBrandView;
         } catch (err) {
@@ -92,7 +115,7 @@ export class SPService {
             .items
             .select("Language")
             .expand().get()).map(e => (e.Language)))];
-        console.log(listItems)
+        // console.log(listItems)
         return listItems;
     }
 
@@ -101,7 +124,7 @@ export class SPService {
             .items
             .select("BrandViewType")
             .expand().get()).map(e => (e.BrandViewType)))];
-        console.log(listItems)
+        // console.log(listItems)
         return listItems;
     }
 
@@ -113,7 +136,7 @@ export class SPService {
         // console.log(listItems)
 
         let listItems = await sp.web.lists.getByTitle("Toolbox").items.get();
-        console.log(listItems)
+        // console.log(listItems)
 
 
         return listItems;
@@ -155,7 +178,7 @@ export class SPService {
     }
 
     private filesave(myFile: any, fileType: string) {
-        console.log(myFile.name);
+        // console.log(myFile.name);
         let destUrl = "";
         var flag;
 
@@ -167,17 +190,6 @@ export class SPService {
         }
 
 
-        // pnp.sp.web.getFolderByServerRelativeUrl(destUrl).files.addChunked(myFile.name,myFile,data =>
-        //     {
-        //        console.log({ data: data, message: "progress" });
-        //     }, true).then(f=>
-        //     {
-        //             console.log("File uploaded successfully"+f.data["odata.etag"]);  
-        //             destUrl=destUrl+"//"+myFile.name;
-        //     });
-        //     console.log(sp.web.getFolderByServerRelativeUrl("/Site Assets/Program Assets/testPhoto/"));
-        //    // let myfile = (document.querySelector("#newfile") as HTMLInputElement).files[0]; 
-
         sp.web.getFolderByServerRelativeUrl(destUrl).files.add(myFile.name, myFile, true).then(f => {
             console.log("File Uploaded :" + myFile.name);
             f.file.getItem().then(item => {
@@ -186,7 +198,7 @@ export class SPService {
                     Title: "Metadata Updated"
                 }).then((myupdate) => {
                     // console.log(myupdate);  
-                    console.log("Metadata Updated");
+                    // console.log("Metadata Updated");
                     //   destUrl=destUrl+myFile.name;
                     //   console.log(destUrl); 
 
@@ -195,7 +207,7 @@ export class SPService {
         });
         //console.log(flag);
 
-        console.log(this.context.pageContext.web.absoluteUrl + destUrl + myFile.name);
+        // console.log(this.context.pageContext.web.absoluteUrl + destUrl + myFile.name);
         // console.log();
         return this.context.pageContext.web.absoluteUrl + destUrl.substring(20) + myFile.name;
     }

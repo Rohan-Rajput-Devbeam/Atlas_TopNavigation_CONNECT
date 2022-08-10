@@ -40,7 +40,10 @@ export interface IAtlasNavigationConnectState {
   currUserGroups: any;
   currentUserEmail: string;
   cuurentUserID: any;
+  currentUserName: string;
   modalShow1: boolean;
+  rootOwnerGroups: any;
+  displaySiteContent: boolean;
 
 
 
@@ -78,7 +81,11 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
       currUserGroups: [],
       currentUserEmail: "",
       cuurentUserID: "",
-      modalShow1: false
+      currentUserName: "",
+      modalShow1: false,
+      rootOwnerGroups: [],
+      displaySiteContent: false
+
 
 
 
@@ -88,6 +95,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
 
     this.getCurrentUser();
     this.getUserGroups2();
+    this.getRootOwners();
 
     // this.getUserLanguage();
     // this.getUniqueLanguages();
@@ -112,11 +120,12 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     let user = await this.SPService.getCurrentUser();
     let curuser = user
     let cur = curuser.LoginName.split('|')
-    console.log(curuser)
-    console.log(cur, cur[cur.length - 1])
+    // console.log(curuser)
+    // console.log(cur, cur[cur.length - 1])
     this.setState({
       currentUserEmail: cur[cur.length - 1],
-      cuurentUserID: curuser.Id
+      cuurentUserID: curuser.Id,
+      currentUserName: curuser.Title
     })
 
     this.setState({
@@ -131,7 +140,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
       this.getToolboxItems();
 
     });
-    console.log(this.state.user)
+    // console.log(this.state.user)
   }
 
   @autobind
@@ -151,29 +160,42 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     }
 
     let response = this.state.currUserGroups;
-    var finalArray = response.value.map(function (obj: { Title: any; }) {
+    var finalArray1 = response.value.map(function (obj: { Title: any; }) {
       return obj.Title;
     });  //get user groups...
+    var finalArray = response.value.map(function (obj: { displayName: any; }) {
+      return obj.displayName;
+    });
+
+
     // const GroupArray = this.props.people.map((obj: { fullName: any; }) => {
     //   return obj.fullName;
     // });
-    const GroupArray = this.props.people.map((obj: { email: any; }) => {
-      return obj.email;
-    });
+
+    // const GroupArray = this.props.people.map((obj: { email: any; }) => {
+    //   return obj.email;
+    // });
+    var tempPeopleArray = this.props.people
+    // console.log(tempPeopleArray)
+    const GroupArray = tempPeopleArray.map(element => element.description);
 
     // var usrFullname = this.context.pageContext.user.displayName;
     // var usrFullname = "Rohan Rajput";
     let usrFullname = await (await sp.web.currentUser()).Email;
-    console.log(usrFullname)
-    console.log(finalArray)
+    // console.log(usrFullname)
+    // console.log(finalArray)
+    // console.log(GroupArray)
+
+
 
     var Groupintersections = finalArray.filter(e => GroupArray.indexOf(e) !== -1);
 
     // console.log(finalArray);
-    console.log(this.props.people);
+    // console.log(this.props.people);
     for (let i = 0; i < this.props.people.length; i++) {
-      console.log(this.props.people[i].fullName);
-      if (finalArray.includes(this.props.people[i].fullName) || GroupArray.includes(usrFullname) || Groupintersections.length > 0) {
+      // console.log(this.props.people[i].fullName);
+      //finalArray.includes(this.props.people[i].fullName) ||
+      if (GroupArray.includes(usrFullname) || Groupintersections.length > 0) {
         // console.log("User Can view this section...!!");
         this.setState({
           displayFlag: true
@@ -187,22 +209,52 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
   public async getUserGroups2() {
 
     let usrGroups = await this.SPService.getUserGroups();
-    console.log(usrGroups);
+    // console.log(usrGroups);
     this.setState({
       currUserGroups: usrGroups,
 
     });
-    console.log(this.state.currUserGroups);
-    console.log(this.state.user)
+    // console.log(this.state.currUserGroups);
+    // console.log(this.state.user)
 
     this.categorizeGroups();
   }
 
+  @autobind
+  public async getRootOwners() {
+
+    let rootOwnerGroups = await this.SPService.getRootOwners();
+    // console.log(rootOwnerGroups)
+    this.setState({
+      rootOwnerGroups: rootOwnerGroups
+
+    });
+    // console.log(this.state.rootOwnerGroups)
+
+    let response = this.state.rootOwnerGroups;
+    var finalArray1 = response.value.map(function (obj: { Title: any; }) {
+      return obj.Title;
+    });  //get user groups...
+    // console.log(finalArray1)
+
+    const GroupArray = ["Root Owners"] //...Hardcode Root Owners group...
+    // console.log(GroupArray)
+    var Groupintersections = finalArray1.filter(e => GroupArray.indexOf(e) !== -1);
+    // console.log(Groupintersections)
+    if (Groupintersections.length > 0) {
+      this.setState({
+        displaySiteContent: true
+      })
+    }
+
+  }
+
+
 
   @autobind
   async handleSubmit(selectedLang: string, selectedBrandView: string) {
-    console.log(selectedLang)
-    console.log(selectedBrandView)
+    // console.log(selectedLang)
+    // console.log(selectedBrandView)
 
     let tempMail = "@beamsuntory.com";
     let result = this.state.user.LoginName.includes(tempMail);
@@ -217,7 +269,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     if (this.state.isNewUser == true) {
       // selectedLang ="English"
       // response = await this.SPService.addListItem(this.state.listName, this.state.user.LoginName.split('|')[2], selectedLang);   
-      console.log(this.state.user)
+      // console.log(this.state.user)
       response = await this.SPService.addListItem(this.state.listName, currUserEmailId, selectedLang, selectedBrandView);    //For new user language is set to English by default.
 
 
@@ -225,7 +277,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     else {
       response = await this.SPService.updateListItem(this.state.listName, selectedLang, selectedBrandView);
     }
-    console.log(response)
+    // console.log(response)
     window.location.reload();
   }
 
@@ -246,7 +298,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
   @autobind
   public async getToolboxItems() {
     let toolTitle = await this.SPService.getToolboxItems();
-    console.log(toolTitle)
+    // console.log(toolTitle)
     this.setState({
       toolboxItems: toolTitle
     })
@@ -266,19 +318,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
       userBrandView: userBrandView.length > 0 ? userBrandView[0] : "Classic View",
       isNewUser: userBrandView.length > 0 ? false : true
     })
-    console.log(userBrandView[0])
-    console.log(this.state.userBrandView)
-
-
-
-    // if(this.state.isNewUser == true){
-    //   this.setState({
-    //     // modalShow: true Modal will not popup by default
-    //     modalShow: false
-
-    //   });
-    //   this.handleSubmit("English", "ModernView")  ///For new user language is set to English by default..
-    // }
+    
 
 
   }
@@ -297,10 +337,10 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     let result = this.state.user.LoginName.includes(tempMail);
     let currUserEmailId = result ? this.state.user.LoginName.split('|')[2] : this.state.user.Email.toLowerCase();
 
-    console.log(this.state.user)
+    // console.log(this.state.user)
     let userLanguage = await this.SPService.getUserLanguage(this.state.listName, currUserEmailId);
     let browserLanguage = navigator.language;
-    console.log(this.state.user)
+    // console.log(this.state.user)
 
 
 
@@ -309,7 +349,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
       userLanguage: userLanguage.length > 0 ? userLanguage[0] : "newuser",
       isNewUser: userLanguage.length > 0 ? false : true
     })
-    console.log(userLanguage[0])
+    // console.log(userLanguage[0])
 
 
     let availableLanguages = ['Chinese', 'English', 'French', 'German', 'Japanese', 'Polish', 'Portuguese', 'Russian', 'Spanish',
@@ -338,7 +378,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     if (matchedSpanish ? matchedSpanish.length > 0 : false) { matchedLanguage = 'Spanish' };
 
 
-    console.log(matchedLanguage)
+    // console.log(matchedLanguage)
 
 
 
@@ -365,8 +405,8 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
   public render(): React.ReactElement<IAtlasNavigationConnectProps> {
     var lang = navigator.language;
     var langs = navigator.languages;
-    console.log(lang)
-    console.log(langs)
+    // console.log(lang)
+    // console.log(langs)
 
     let navText = [
       "English,Our Brands,Rackhouse,Tools",
@@ -381,19 +421,15 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     ]
 
 
-    console.log(this.state.user)
+    // console.log(this.state.user)
 
-    console.log(this.state.userLanguage)
+    // console.log(this.state.userLanguage)
     let tempLanguage = this.state.userLanguage
     // console.log(navText[0].English)
-    console.log(tempLanguage)
+    // console.log(tempLanguage)
     const testBody = navText.map(e => (e))
-    console.log(testBody)
+    // console.log(testBody)
 
-    if (tempLanguage == "English") {
-      // const myArray = testBody[0].split(",");
-
-    }
     let myArray = testBody[0].split(",");
 
 
@@ -431,21 +467,12 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
 
 
 
-    // const myArray = testBody[0].split(",");
-    console.log(myArray)
-    // this.properties.htmlBody = myArray
-
-    // if (!this.state.displayFlag) <Loader/>
-
     return (
       <>
-        {myArray.length == 0 ?
-           null
+        {this.state.userLanguage == null || this.state.userLanguage == '' ?
+          null
           :
           <>
-
-
-            {console.log(this.state.displayFlag)}
 
             {this.state.displayFlag || this.state.displayFlag == true || this.state.displayFlag == undefined || this.state.displayFlag == null ?
               <div className={styles.atlasNavigationConnect}>
@@ -491,12 +518,15 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
                         </a>
 
 
-                        <a className={styles.settingBtn} href='https://bgsw1.sharepoint.com/sites/CONNECTII/_layouts/15/viewlsts.aspx'>
-                          <IoMdSettings className={styles.settingBtn} style={{ cursor: "pointer", width: "2em", height: "1.2em" }} />
-                        </a>
-                        {/* </Col> */}
+                        {this.state.displaySiteContent ?
+                          <a className={styles.settingBtn} href='https://bgsw1.sharepoint.com/sites/CONNECTII/_layouts/15/viewlsts.aspx'>
+                            <IoMdSettings className={styles.settingBtn} style={{ cursor: "pointer", width: "2em", height: "1.2em" }} />
+                          </a>
+                          : null}
 
+<Nav.Link  style={{ marginLeft: "50px", marginRight: "20px", color:"#cc0a0a" }} href="">Hi, {this.state.currentUserName}</Nav.Link>
 
+                          {/* <h3>Hi, {this.state.currentUserName}</h3> */}
 
                       </Nav>
                     </Navbar.Collapse>
@@ -532,8 +562,8 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
             }
 
           </>
-          
-          }
+
+        }
       </>
     );
   }
