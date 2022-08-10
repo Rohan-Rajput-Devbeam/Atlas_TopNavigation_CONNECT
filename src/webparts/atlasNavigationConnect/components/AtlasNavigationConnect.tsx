@@ -41,6 +41,7 @@ export interface IAtlasNavigationConnectState {
   currentUserEmail: string;
   cuurentUserID: any;
   currentUserName: string;
+  currUserInitials: string;
   modalShow1: boolean;
   rootOwnerGroups: any;
   displaySiteContent: boolean;
@@ -82,6 +83,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
       currentUserEmail: "",
       cuurentUserID: "",
       currentUserName: "",
+      currUserInitials: "",
       modalShow1: false,
       rootOwnerGroups: [],
       displaySiteContent: false
@@ -120,12 +122,17 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     let user = await this.SPService.getCurrentUser();
     let curuser = user
     let cur = curuser.LoginName.split('|')
+    const fullName = curuser.Title.split(' ');
+    const initials = fullName.shift().charAt(0) + fullName.pop().charAt(0);
+    
+
     // console.log(curuser)
     // console.log(cur, cur[cur.length - 1])
     this.setState({
       currentUserEmail: cur[cur.length - 1],
       cuurentUserID: curuser.Id,
-      currentUserName: curuser.Title
+      currentUserName: curuser.Title,
+      currUserInitials: initials.toUpperCase()
     })
 
     this.setState({
@@ -318,7 +325,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
       userBrandView: userBrandView.length > 0 ? userBrandView[0] : "Classic View",
       isNewUser: userBrandView.length > 0 ? false : true
     })
-    
+
 
 
   }
@@ -524,9 +531,11 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
                           </a>
                           : null}
 
-<Nav.Link  style={{ marginLeft: "50px", marginRight: "20px", color:"#cc0a0a" }} href="">Hi, {this.state.currentUserName}</Nav.Link>
+                        <Nav.Link style={{ marginLeft: "50px", color: "#cc0a0a", fontSize: "0.75em", paddingTop: "14px" }} href="">Hello,</Nav.Link>
+                        <Nav.Link style={{  color: "#00c5d9", fontSize: "0.75em", paddingTop: "14px" }} href="">{this.state.currentUserName}</Nav.Link>
+                        <Nav.Link style={{ paddingTop: "5px" }} data-letters={this.state.currUserInitials} href=""></Nav.Link>
 
-                          {/* <h3>Hi, {this.state.currentUserName}</h3> */}
+                        {/* <h3>Hi, {this.state.currentUserName}</h3> */}
 
                       </Nav>
                     </Navbar.Collapse>
