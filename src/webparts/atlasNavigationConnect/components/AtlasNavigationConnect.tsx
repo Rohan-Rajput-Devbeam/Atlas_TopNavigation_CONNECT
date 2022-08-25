@@ -124,7 +124,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     let cur = curuser.LoginName.split('|')
     const fullName = curuser.Title.split(' ');
     const initials = fullName.shift().charAt(0) + fullName.pop().charAt(0);
-    
+
 
     // console.log(curuser)
     // console.log(cur, cur[cur.length - 1])
@@ -396,7 +396,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
 
       });
 
-      this.handleSubmit(matchedLanguage, "ModernView")  ///For new user language is set to English by default..
+      this.handleSubmit(matchedLanguage, "Modern View")  ///For new user language is set to English by default..
     }
   }
 
@@ -532,7 +532,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
                           : null}
 
                         <Nav.Link style={{ marginLeft: "50px", color: "#cc0a0a", fontSize: "0.75em", paddingTop: "14px" }} href="">Hello,</Nav.Link>
-                        <Nav.Link style={{  color: "#00c5d9", fontSize: "0.75em", paddingTop: "14px" }} href="">{this.state.currentUserName}</Nav.Link>
+                        <Nav.Link style={{ color: "#00c5d9", fontSize: "0.75em", paddingTop: "14px" }} href="">{this.state.currentUserName}</Nav.Link>
                         <Nav.Link style={{ paddingTop: "5px" }} data-letters={this.state.currUserInitials} href=""></Nav.Link>
 
                         {/* <h3>Hi, {this.state.currentUserName}</h3> */}

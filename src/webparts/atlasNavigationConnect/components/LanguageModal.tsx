@@ -103,7 +103,8 @@ export class LanguageModal extends React.Component<any, any> {
                 <Form.Text text="muted" style={{ color: '#fff', fontSize: '18px' }}>Select Your Language</Form.Text>
                 <br></br>
 
-                <Form.Control as="select" aria-label="Default select example"
+
+                {/* <Form.Control as="select" aria-label="Default select example"
                   onChange={this.changeValue1}
                   value={this.state.dropDownValue1} name="programScope" placeholder="Select My Scope" required>
 
@@ -112,7 +113,9 @@ export class LanguageModal extends React.Component<any, any> {
                     <option> {element} </option>
                   ))}
                 </Form.Control>
-                <Form.Text text="muted" style={{ color: '#fff', fontSize: '18px' }}>Select Brand View</Form.Text>
+                <Form.Text text="muted" style={{ color: '#fff', fontSize: '18px' }}>Select Brand View</Form.Text> */}
+
+                
 
               </Form.Group>
 
