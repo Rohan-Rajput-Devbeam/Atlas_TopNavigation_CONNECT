@@ -2,7 +2,7 @@ import * as React from 'react';
 import styles from './AtlasNavigationConnect.module.scss';
 import { IAtlasNavigationConnectProps } from './IAtlasNavigationConnectProps';
 import { escape } from '@microsoft/sp-lodash-subset';
-import { Accordion, Alert, Button, Card, Col, Container, Form, InputGroup, Nav, Navbar, NavDropdown, Row, Table } from 'react-bootstrap';
+import { Accordion, Alert, Button, Card, Col, Container, Form, FormControl, InputGroup, Nav, Navbar, NavDropdown, Row, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import { SPService } from '../services/SPServices';
 import autobind from 'autobind-decorator';
@@ -10,11 +10,13 @@ import autobind from 'autobind-decorator';
 import 'bootstrap/dist/css/bootstrap.css';
 import { includes } from 'lodash';
 import { FaUser } from 'react-icons/fa'
-import { IoMdSettings } from 'react-icons/io'
+import { IoMdSettings, IoIosSearch } from 'react-icons/io'
 import { LanguageModal } from './LanguageModal'
 import { NoPermissionModal } from './NoPermissionModal'
 
 import { sp } from '@pnp/sp/presets/all';
+import { Icon } from '@microsoft/office-ui-fabric-react-bundle';
+
 
 
 
@@ -45,6 +47,8 @@ export interface IAtlasNavigationConnectState {
   modalShow1: boolean;
   rootOwnerGroups: any;
   displaySiteContent: boolean;
+
+  searchStr: any;
 
 
 
@@ -86,7 +90,9 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
       currUserInitials: "",
       modalShow1: false,
       rootOwnerGroups: [],
-      displaySiteContent: false
+      displaySiteContent: false,
+
+      searchStr: ""
 
 
 
@@ -256,6 +262,22 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
 
   }
 
+  @autobind
+  public onSearch(event) {
+    console.log(event.target.value);
+    let varStr = event.target.value;
+    this.setState({
+      searchStr: varStr
+    })
+
+  }
+
+  @autobind
+  public handleKeyPress(e) {
+    if (e.key === 'Enter') {
+      location.href = `https://bgsw1.sharepoint.com/sites/CONNECTII/_layouts/15/search.aspx/?q=` + this.state.searchStr;
+    }
+  }
 
 
   @autobind
@@ -408,6 +430,8 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     })
   }
 
+
+
   @autobind
   public render(): React.ReactElement<IAtlasNavigationConnectProps> {
     var lang = navigator.language;
@@ -483,6 +507,38 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
 
             {this.state.displayFlag || this.state.displayFlag == true || this.state.displayFlag == undefined || this.state.displayFlag == null ?
               <div className={styles.atlasNavigationConnect}>
+                {/* <div className="input-group rounded">
+                          <input type="search" className="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" onSubmit={(selectedValue) => this.handleClick(selectedValue)} />
+                          <span className="input-group-text border-0" id="search-addon">
+                            <i className="fas fa-search"></i>
+                            <IoIosSearch />
+                          </span>
+                        </div> */}
+
+                <Col>
+                  <Row style={{ paddingLeft: "25%", paddingRight: "25%", paddingTop: "10px" }}>
+                    <InputGroup className="mb-3">
+
+                      <FormControl
+                        placeholder="Search in SharePoint"
+                        aria-label="Search"
+                        aria-describedby="search"
+                        onChange={this.onSearch}
+                        onKeyUp={this.handleKeyPress.bind(this)}
+                      />
+                      <InputGroup.Prepend>
+                        <InputGroup.Text id="search">
+                          {/* <IconButton iconProps={{ iconName: 'Search' }} title="Search" ariaLabel="Search" /> */}
+                          <a target="_self" data-interception="off" rel="noopener noreferrer" href={`https://bgsw1.sharepoint.com/sites/CONNECTII/_layouts/15/search.aspx/?q=` + this.state.searchStr}>
+                            <Icon iconName='Search' />
+                          </a>
+                        </InputGroup.Text>
+                      </InputGroup.Prepend>
+                    </InputGroup>
+                  </Row>
+
+                </Col>
+
                 <Navbar style={{ backgroundColor: "#fff", whiteSpace: "nowrap" }} expand="lg">
 
 
@@ -536,12 +592,39 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
                         <Nav.Link style={{ paddingTop: "5px" }} data-letters={this.state.currUserInitials} href=""></Nav.Link>
 
                         {/* <h3>Hi, {this.state.currentUserName}</h3> */}
+                        {/* <InputGroup className="col-6">
+                        <FormControl
+                          placeholder="Search"
+                          aria-label="Search"
+                          aria-describedby="basic-addon2"
+                        />
+                        <Button variant="outline-secondary" id="button-addon2">
+                          Search
+                        </Button>
+                        </InputGroup> */}
+
+
+                        {/* <div className="input-group ps-5">
+                          <div id="navbar-search-autocomplete" className="form-outline">
+                            <input type="search" id="form1" className="form-control" />
+                            <label className="form-label" htmlFor="form1">Search</label>
+                          </div>
+                          <button type="button" className="btn btn-primary">
+                            <i className="fas fa-search"></i>
+                          </button>
+                        </div> */}
+
+
 
                       </Nav>
                     </Navbar.Collapse>
 
 
+
+
+
                   </Container>
+
 
 
                 </Navbar>
