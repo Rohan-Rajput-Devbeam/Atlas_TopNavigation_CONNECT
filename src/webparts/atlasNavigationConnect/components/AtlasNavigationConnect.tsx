@@ -516,11 +516,12 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
                         </div> */}
 
                 <Col>
-                  <Row style={{ paddingLeft: "25%", paddingRight: "25%", paddingTop: "10px" }}>
-                    <InputGroup className="mb-3">
+                  <Row style={{ paddingLeft: "2%", paddingRight: "83%", paddingTop: "10px" }}>
+                    <InputGroup>
 
                       <FormControl
-                        placeholder="Search in SharePoint"
+                      // style={{fontSize:"1em"}}
+                        placeholder="Search"
                         aria-label="Search"
                         aria-describedby="search"
                         onChange={this.onSearch}
