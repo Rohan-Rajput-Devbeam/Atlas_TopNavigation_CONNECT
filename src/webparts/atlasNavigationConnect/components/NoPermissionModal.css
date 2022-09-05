@@ -4,9 +4,11 @@
     box-shadow: #fff 0px 0px 10px 0px!important;
 } */
 
+
 div[class*="NoPermissionModal"] .modal-content {
     background: none !important;
     border-radius: 0px !important;
+    border: #aaaaaa double 0px;
     /* box-shadow: #fff 0px 0px 10px 0px !important; */
 }
 /* .select-lang{
@@ -18,3 +20,4 @@ div[class*="NoPermissionModal"] .modal-content {
 /* div[class*="fade modal show"]{
     background-color: #fff !important;
 } */
+
