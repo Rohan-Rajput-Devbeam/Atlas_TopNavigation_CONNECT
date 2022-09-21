@@ -17,7 +17,7 @@ import { NoPermissionModal } from './NoPermissionModal'
 import { sp } from '@pnp/sp/presets/all';
 import { Icon } from '@microsoft/office-ui-fabric-react-bundle';
 
-
+import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
 
 
 export interface IAtlasNavigationConnectState {
@@ -49,6 +49,7 @@ export interface IAtlasNavigationConnectState {
   displaySiteContent: boolean;
 
   searchStr: any;
+  isMobileDevice: boolean;
 
 
 
@@ -92,7 +93,8 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
       rootOwnerGroups: [],
       displaySiteContent: false,
 
-      searchStr: ""
+      searchStr: "",
+      isMobileDevice: isMobile
 
 
 
@@ -334,6 +336,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
 
   }
 
+
   @autobind
   public async getUserBrandView() {
     let tempMail = "@beamsuntory.com";
@@ -436,6 +439,8 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
   public render(): React.ReactElement<IAtlasNavigationConnectProps> {
     var lang = navigator.language;
     var langs = navigator.languages;
+    console.log(this.state.isMobileDevice)
+
     // console.log(lang)
     // console.log(langs)
 
@@ -520,7 +525,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
                     <InputGroup>
 
                       <FormControl
-                      // style={{fontSize:"1em"}}
+                        // style={{fontSize:"1em"}}
                         placeholder="Search"
                         aria-label="Search"
                         aria-describedby="search"
@@ -553,9 +558,15 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
                       <Nav fill variant="tabs" defaultActiveKey="">
 
                         {this.state.userBrandView && this.state.userBrandView == "Classic View" ?
-                          <Nav.Link className={styles.navLink} style={{ marginLeft: "50px", marginRight: "20px" }} href="https://bgsw1.sharepoint.com/sites/CONNECTII/SitePages/Our%20Brands.aspx">{myArray[1]}</Nav.Link>
+                          <Nav.Link className={styles.navLink} style={{ marginLeft: "50px", marginRight: "20px" }} href="https://bgsw1.sharepoint.com/sites/CONNECTII/SitePages/Our%20Brands%20Old.aspx">{myArray[1]}</Nav.Link>
                           :
-                          <Nav.Link className={styles.navLink} style={{ marginLeft: "50px", marginRight: "20px" }} href="https://bgsw1.sharepoint.com/sites/CONNECTII/SitePages/Our%20Brands%20Modern.aspx">{myArray[1]}</Nav.Link>
+                          <>
+                            {this.state.isMobileDevice ?
+                              <Nav.Link className={styles.navLink} style={{ marginLeft: "50px", marginRight: "20px" }} href="https://bgsw1.sharepoint.com/sites/CONNECTII/SitePages/Our%20Brands%20Old.aspx">{myArray[1]}</Nav.Link>
+                              :
+                              <Nav.Link className={styles.navLink} style={{ marginLeft: "50px", marginRight: "20px" }} href="https://bgsw1.sharepoint.com/sites/CONNECTII/SitePages/Our%20Brands%20Modern.aspx">{myArray[1]}</Nav.Link>
+                            }
+                          </>
                         }
 
                         <Nav.Link className={styles.navLink} style={{ marginLeft: "50px", marginRight: "20px" }} href="https://bgsw1.sharepoint.com/sites/CONNECTII/SitePages/Rackhouse.aspx#loadAll">{myArray[2]}</Nav.Link>
