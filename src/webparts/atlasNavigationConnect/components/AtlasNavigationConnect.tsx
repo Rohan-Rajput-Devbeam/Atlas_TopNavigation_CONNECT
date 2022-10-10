@@ -163,7 +163,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     // this.setState({
     //   displayFlag: false
     // })
-    if (this.props.people.length == 0 || this.props.people == null || this.props.people == undefined) {
+    if (this.props.people == undefined || this.props.people.length == 0 || this.props.people == null) {
       this.setState({
         displayFlag: true
       })
@@ -190,9 +190,9 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
     // const GroupArray = this.props.people.map((obj: { email: any; }) => {
     //   return obj.email;
     // });
-    var tempPeopleArray = this.props.people
+    var tempPeopleArray = this.props.people != undefined ? this.props.people : []
     // console.log(tempPeopleArray)
-    const GroupArray = tempPeopleArray.map(element => element.description);
+    const GroupArray = this.props.people != undefined ? tempPeopleArray.map(element => element.description) : []
 
     // var usrFullname = this.context.pageContext.user.displayName;
     // var usrFullname = "Rohan Rajput";
@@ -207,14 +207,16 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
 
     // console.log(finalArray);
     // console.log(this.props.people);
-    for (let i = 0; i < this.props.people.length; i++) {
-      // console.log(this.props.people[i].fullName);
-      //finalArray.includes(this.props.people[i].fullName) ||
-      if (GroupArray.includes(usrFullname) || Groupintersections.length > 0) {
-        // console.log("User Can view this section...!!");
-        this.setState({
-          displayFlag: true
-        })
+    if (this.props.people != undefined) {
+      for (let i = 0; i < this.props.people.length; i++) {
+        // console.log(this.props.people[i].fullName);
+        //finalArray.includes(this.props.people[i].fullName) ||
+        if (GroupArray.includes(usrFullname) || Groupintersections.length > 0) {
+          // console.log("User Can view this section...!!");
+          this.setState({
+            displayFlag: true
+          })
+        }
       }
     }
 
@@ -439,7 +441,7 @@ export default class AtlasNavigationConnect extends React.Component<IAtlasNaviga
   public render(): React.ReactElement<IAtlasNavigationConnectProps> {
     var lang = navigator.language;
     var langs = navigator.languages;
-    console.log(this.state.isMobileDevice)
+    // console.log(this.state.isMobileDevice)
 
     // console.log(lang)
     // console.log(langs)
